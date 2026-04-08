@@ -2,7 +2,6 @@ import requests
 import time
 import urllib3
 
-# SSL warnings off
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def start():
@@ -31,10 +30,42 @@ def start():
                 print("Token nahi mila!")
                 return
 
-            h = {
+            match_headers = {
                 "Authorization": f"Bearer {tk}"
             }
 
+            # Match start
+            requests.post(
+                "https://client.ind.freefiremobile.com/api/v1/match/start",
+                json={"mode": 10},
+                headers=match_headers,
+                verify=False,
+                timeout=15
+            )
+
+            print("Match Started...")
+            time.sleep(15)
+
+            # Match leave
+            requests.post(
+                "https://client.ind.freefiremobile.com/api/v1/match/leave",
+                headers=match_headers,
+                verify=False,
+                timeout=10
+            )
+
+            print("Match Left! Glory Added.")
+
+        else:
+            print(f"Garena Error: {r.status_code}")
+            print(r.text)
+
+    except Exception as e:
+        print(f"Fail: {e}")
+
+
+if __name__ == "__main__":
+    start()
             # Match start
             requests.post(
                 "https://client.ind.freefiremobile.com/api/v1/match/start",
