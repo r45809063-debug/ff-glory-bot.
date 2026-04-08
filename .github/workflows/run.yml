@@ -1,20 +1,16 @@
 name: FF-Cloud-Bot
 on:
-  schedule:
-    - cron: '*/10 * * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
 
 jobs:
-  build:
+  run-bot:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Install Requests
-        run: pip install requests
-      - name: Run Glory Bot
-        run: python bot.py
+      - run: pip install requests
+      - run: python bot.py
