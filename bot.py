@@ -1,39 +1,35 @@
-import requests, time, random, urllib3
-
-# SSL Error fix karne ke liye
+import requests, time, urllib3
 urllib3.disable_warnings()
 
-# --- AAPKI DETAILS ---
-USER_ID = "4631027154"
-PASSWORD = "7A14AE50087AC2AA7EE80588458CBC931622F4A92307DC9DBB3FC47925166125"
+# Aapka Data
+ID = "4631027154"
+PW = "7A14AE50087AC2AA7EE80588458CBC931622F4A92307DC9DBB3FC47925166125"
 
-def start_bot():
-    print(f"Connecting to Garena for ID: {USER_ID}...")
-    
-    # Ye wahi APIs hain jo JamiulGaming wali script use karti hai
-    login_url = "https://auth.ind.freefiremobile.com/api/v1/login"
-    
-    headers = {
-        "User-Agent": "FreeFire/1.103.1 (Android 11; Build/RP1A.200720.011)",
-        "Content-Type": "application/json",
-        "X-GA-ID": str(random.randint(100000, 999999))
-    }
-
-    payload = {
-        "account": USER_ID,
-        "password": PASSWORD,
-        "region": "IND",
-        "type": 1
-    }
-
+def boost_glory():
+    url = "https://auth.ind.freefiremobile.com/api/v1/login"
+    data = {"account": ID, "password": PW, "region": "IND", "type": 1}
     try:
-        # 1. LOGIN
-        r = requests.post(login_url, json=payload, headers=headers, verify=False, timeout=20)
-        
+        r = requests.post(url, json=data, verify=False, timeout=20)
         if r.status_code == 200:
-            token = r.json().get("access_token")
-            print("✅ [SUCCESS] ID Online Aa Gayi!")
+            tk = r.json().get("access_token")
+            h = {"Authorization": f"Bearer {tk}"}
+            print(f"Login Success! Boosting Glory for {ID}...")
             
+            # Loop jo 5 baar match start/leave karega ek hi run mein
+            for i in range(5):
+                requests.post("https://client.ind.freefiremobile.com/api/v1/match/start", json={"mode": 10}, headers=h, verify=False)
+                time.sleep(2) # Fast matchmaking
+                requests.post("https://client.ind.freefiremobile.com/api/v1/match/leave", headers=h, verify=False)
+                print(f"Match {i+1} Finished.")
+            
+            print("Batch Done! Glory updated in Guild.")
+        else:
+            print(f"Login Failed: {r.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    boost_glory()
             # 2. MATCHMAKING (Mode 10 = Lone Wolf for Glory)
             m_headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
             print("🚀 [MATCH] Matchmaking Shuru...")
